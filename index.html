@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Budget Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <main id="login-view" class="login">
+    <form id="login-form" class="login-card" autocomplete="off">
+      <h1>Budget Book</h1>
+      <p class="muted">Sign in to see your income, expenses, liabilities and cash flow.</p>
+      <label>Username
+        <input id="login-user" type="text" required autocomplete="username">
+      </label>
+      <label>Password
+        <input id="login-pass" type="password" required autocomplete="current-password">
+      </label>
+      <p id="login-error" class="error" role="alert" hidden>Wrong username or password. Try again.</p>
+      <button type="submit" class="btn primary">Sign in</button>
+    </form>
+  </main>
+
+  <!-- APP -->
+  <div id="app-view" hidden>
+    <header class="topbar">
+      <strong class="brand">Budget Book</strong>
+      <div class="topbar-actions">
+        <label class="month-pick">Month
+          <input id="month-input" type="month">
+        </label>
+        <button id="export-btn" class="btn" type="button">Export JSON</button>
+        <button id="import-btn" class="btn" type="button">Import JSON</button>
+        <input id="import-file" type="file" accept="application/json" hidden>
+        <button id="logout-btn" class="btn" type="button">Log out</button>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- CASH FLOW -->
+      <section class="hero" aria-labelledby="hero-title">
+        <p id="hero-title" class="hero-label">Net cash flow for <span id="hero-month"></span></p>
+        <p id="hero-net" class="hero-net">₱0.00</p>
+        <p id="hero-note" class="muted"></p>
+
+        <div id="split-bar" class="split-bar" role="img" aria-label="How this month's income is used"></div>
+
+        <dl class="figures">
+          <div><dt><i class="dot income"></i>Money in</dt><dd id="fig-income">₱0.00</dd></div>
+          <div><dt><i class="dot expense"></i>Expenses</dt><dd id="fig-expenses">₱0.00</dd></div>
+          <div><dt><i class="dot debt"></i>Liability payments</dt><dd id="fig-debt">₱0.00</dd></div>
+          <div><dt>Total still owed</dt><dd id="fig-owed">₱0.00</dd></div>
+        </dl>
+      </section>
+
+      <!-- TREND -->
+      <section class="panel trend" aria-labelledby="trend-title">
+        <h2 id="trend-title">Last 6 months</h2>
+        <div id="trend-chart" class="trend-chart"></div>
+        <p class="legend"><i class="dot income"></i>Money in <i class="dot out"></i>Money out (expenses + liability payments)</p>
+      </section>
+
+      <div class="panels">
+        <!-- INCOME -->
+        <section class="panel" aria-labelledby="income-title">
+          <h2 id="income-title">Income</h2>
+          <form id="income-form" class="entry-form">
+            <input name="description" placeholder="Source (e.g. Salary)" required maxlength="60" aria-label="Income source">
+            <input name="amount" type="number" min="0.01" step="0.01" placeholder="Amount" required aria-label="Income amount">
+            <input name="date" type="date" required aria-label="Income date">
+            <button class="btn primary" type="submit">Add income</button>
+          </form>
+          <ul id="income-list" class="list"></ul>
+        </section>
+
+        <!-- EXPENSES -->
+        <section class="panel" aria-labelledby="expense-title">
+          <h2 id="expense-title">Expenses</h2>
+          <form id="expense-form" class="entry-form">
+            <input name="description" placeholder="What did you buy?" required maxlength="60" aria-label="Expense description">
+            <select name="category" aria-label="Category">
+              <option>Food</option><option>Transport</option><option>Bills</option>
+              <option>Rent</option><option>Health</option><option>Education</option>
+              <option>Shopping</option><option>Other</option>
+            </select>
+            <input name="amount" type="number" min="0.01" step="0.01" placeholder="Amount" required aria-label="Expense amount">
+            <input name="date" type="date" required aria-label="Expense date">
+            <button class="btn primary" type="submit">Add expense</button>
+          </form>
+          <ul id="expense-list" class="list"></ul>
+        </section>
+
+        <!-- LIABILITIES -->
+        <section class="panel" aria-labelledby="liab-title">
+          <h2 id="liab-title">Liabilities</h2>
+          <form id="liab-form" class="entry-form">
+            <input name="name" placeholder="Who do you owe? (e.g. Loan)" required maxlength="60" aria-label="Liability name">
+            <input name="balance" type="number" min="0.01" step="0.01" placeholder="Loan amount (e.g. 75000)" required aria-label="Loan amount">
+            <input name="monthly" type="number" min="0.01" step="0.01" placeholder="Usual monthly payment (optional)" aria-label="Usual monthly payment">
+            <button class="btn primary" type="submit">Add liability</button>
+          </form>
+          <ul id="liab-list" class="list"></ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
