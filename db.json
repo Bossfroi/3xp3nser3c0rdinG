@@ -1,5 +1,12 @@
 {
-  "income": [],
+  "income": [
+    {
+      "id": "mumdt0ipg4zgh",
+      "description": "total money 9-29-26",
+      "amount": 19500,
+      "date": "2026-09-29"
+    }
+  ],
   "expenses": [],
   "savings": [
     {
