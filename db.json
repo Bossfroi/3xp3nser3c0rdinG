@@ -1,7 +1,15 @@
 {
   "income": [],
   "expenses": [],
-  "savings": [],
+  "savings": [
+    {
+      "id": "mumdj5x47arrd",
+      "type": "deposit",
+      "description": "savings for baby",
+      "amount": 15000,
+      "date": "2026-09-29"
+    }
+  ],
   "liabilities": [],
   "payments": [],
   "budgets": {}
