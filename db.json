@@ -21,6 +21,13 @@
       "category": "Food",
       "amount": 500,
       "date": "2026-09-29"
+    },
+    {
+      "id": "munb3t3uvrshk",
+      "description": "wideaw",
+      "category": "Other",
+      "amount": 200,
+      "date": "2026-09-30"
     }
   ],
   "savings": [],
