@@ -2,16 +2,7 @@
   "income": [],
   "expenses": [],
   "savings": [],
-  "liabilities": [
-    {
-      "id": "liab-1",
-      "name": "Personal loan",
-      "original": 75000,
-      "balance": 75000,
-      "monthly": 5000,
-      "dueDay": 15
-    }
-  ],
+  "liabilities": [],
   "payments": [],
   "budgets": {}
 }
