@@ -1,5 +1,12 @@
 {
-  "income": [],
+  "income": [
+    {
+      "id": "mumdhus5pa3bv",
+      "description": "Floating money on bpi",
+      "amount": 19500,
+      "date": "2026-09-29"
+    }
+  ],
   "expenses": [],
   "savings": [],
   "liabilities": [],
