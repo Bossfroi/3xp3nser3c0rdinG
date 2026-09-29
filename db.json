@@ -15,19 +15,12 @@
       "id": "mumdl4lamx1ce",
       "name": "motor utang",
       "original": 75000,
-      "balance": 68500,
+      "balance": 72000,
       "monthly": 3000,
       "dueDay": 15
     }
   ],
   "payments": [
-    {
-      "id": "mumdl795v1jdo",
-      "liabilityId": "mumdl4lamx1ce",
-      "month": "2026-09",
-      "amount": 3500,
-      "date": "2026-09-29"
-    },
     {
       "id": "mumdljetixobx",
       "liabilityId": "mumdl4lamx1ce",
