@@ -1,164 +1,32 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Budget Book</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-  <!-- LOGIN -->
-  <main id="login-view" class="login">
-    <form id="login-form" class="login-card" autocomplete="off">
-      <div class="login-top">
-        <h1>Budget Book</h1>
-        <button type="button" class="btn small lang-btn"></button>
-      </div>
-      <p class="muted" data-i18n="loginIntro"></p>
-      <label><span data-i18n="username"></span>
-        <input id="login-user" type="text" required autocomplete="username">
-      </label>
-      <label><span data-i18n="password"></span>
-        <input id="login-pass" type="password" required autocomplete="current-password">
-      </label>
-      <p id="login-error" class="error" role="alert" hidden></p>
-      <button type="submit" class="btn primary" data-i18n="signIn"></button>
-    </form>
-  </main>
-
-  <!-- APP -->
-  <div id="app-view" hidden>
-    <header class="topbar">
-      <strong class="brand">Budget Book</strong>
-      <div class="topbar-actions">
-        <label class="month-pick"><span data-i18n="month"></span>
-          <input id="month-input" type="month">
-        </label>
-        <span id="save-status" class="save-status" role="status" aria-live="polite"></span>
-        <button id="export-btn" class="btn" type="button" data-i18n="export"></button>
-        <button id="import-btn" class="btn" type="button" data-i18n="import"></button>
-        <input id="import-file" type="file" accept="application/json" hidden>
-        <button type="button" class="btn lang-btn"></button>
-        <button id="logout-btn" class="btn" type="button" data-i18n="logout"></button>
-      </div>
-    </header>
-
-    <main class="wrap">
-      <!-- CASH FLOW -->
-      <section class="hero" aria-labelledby="hero-title">
-        <p id="hero-title" class="hero-label"></p>
-        <p id="hero-net" class="hero-net">₱0.00</p>
-        <p id="hero-note" class="muted"></p>
-
-        <div id="split-bar" class="split-bar" role="img"></div>
-
-        <dl class="figures">
-          <div><dt><i class="dot income"></i><span data-i18n="moneyIn"></span></dt><dd id="fig-income">₱0.00</dd></div>
-          <div><dt><i class="dot expense"></i><span data-i18n="expenses"></span></dt><dd id="fig-expenses">₱0.00</dd></div>
-          <div><dt><i class="dot debt"></i><span data-i18n="liabPayments"></span></dt><dd id="fig-debt">₱0.00</dd></div>
-          <div><dt><i class="dot save"></i><span data-i18n="savedMonth"></span></dt><dd id="fig-saved">₱0.00</dd></div>
-          <div><dt><span data-i18n="totalSavings"></span></dt><dd id="fig-savings">₱0.00</dd></div>
-          <div><dt><span data-i18n="totalOwed"></span></dt><dd id="fig-owed">₱0.00</dd></div>
-        </dl>
-      </section>
-
-      <!-- TREND -->
-      <section class="panel trend" aria-labelledby="trend-title">
-        <h2 id="trend-title" data-i18n="trend"></h2>
-        <div id="trend-chart" class="trend-chart"></div>
-        <p class="legend"><i class="dot income"></i><span data-i18n="legendIn"></span> <i class="dot out"></i><span data-i18n="legendOut"></span></p>
-      </section>
-
-      <div class="panels">
-        <!-- INCOME -->
-        <section class="panel" aria-labelledby="income-title">
-          <h2 id="income-title" data-i18n="income"></h2>
-          <form id="income-form" class="entry-form">
-            <input name="description" required maxlength="60" data-i18n-ph="incSource">
-            <input name="amount" type="number" min="0.01" step="0.01" required data-i18n-ph="amount">
-            <input name="date" type="date" required data-i18n-ph="date">
-            <div class="form-buttons">
-              <button class="btn primary submit-btn" type="submit" data-i18n="addIncome"></button>
-              <button class="btn cancel-btn" type="button" hidden data-i18n="cancel"></button>
-            </div>
-          </form>
-          <ul id="income-list" class="list"></ul>
-        </section>
-
-        <!-- EXPENSES -->
-        <section class="panel" aria-labelledby="expense-title">
-          <h2 id="expense-title" data-i18n="expenses"></h2>
-          <form id="expense-form" class="entry-form">
-            <input name="description" required maxlength="60" data-i18n-ph="expDesc">
-            <select name="category" data-i18n-ph="category"></select>
-            <input name="amount" type="number" min="0.01" step="0.01" required data-i18n-ph="amount">
-            <input name="date" type="date" required data-i18n-ph="date">
-            <div class="form-buttons">
-              <button class="btn primary submit-btn" type="submit" data-i18n="addExpense"></button>
-              <button class="btn cancel-btn" type="button" hidden data-i18n="cancel"></button>
-            </div>
-          </form>
-          <ul id="expense-list" class="list"></ul>
-        </section>
-
-        <!-- SAVINGS -->
-        <section class="panel" aria-labelledby="savings-title">
-          <h2 id="savings-title" data-i18n="savings"></h2>
-          <p class="panel-figure"><span data-i18n="totalSavings"></span>: <strong id="savings-total">₱0.00</strong></p>
-          <p class="panel-figure"><span data-i18n="The remaining money you keep and store for future goals or emergencies">
-          <form id="savings-form" class="entry-form">
-            <select name="type" data-i18n-ph="savType">
-              <option value="deposit" data-i18n="depositOpt"></option>
-              <option value="withdraw" data-i18n="withdrawOpt"></option>
-            </select>
-            <input name="description" maxlength="60" data-i18n-ph="savNote">
-            <input name="amount" type="number" min="0.01" step="0.01" required data-i18n-ph="amount">
-            <input name="date" type="date" required data-i18n-ph="date">
-            <p class="error form-error" role="alert" hidden></p>
-            <div class="form-buttons">
-              <button class="btn primary submit-btn" type="submit" data-i18n="addEntry"></button>
-              <button class="btn cancel-btn" type="button" hidden data-i18n="cancel"></button>
-            </div>
-          </form>
-          <ul id="savings-list" class="list"></ul>
-        </section>
-
-        <!-- LIABILITIES -->
-        <section class="panel" aria-labelledby="liab-title">
-          <h2 id="liab-title" data-i18n="liabilities"></h2>
-          <form id="liab-form" class="entry-form">
-            <input name="name" required maxlength="60" data-i18n-ph="liabName">
-            <input name="balance" type="number" min="0.01" step="0.01" required data-i18n-ph="loanAmount">
-            <input name="monthly" type="number" min="0.01" step="0.01" data-i18n-ph="usualMonthly">
-            <input name="dueDay" type="number" min="1" max="31" step="1" data-i18n-ph="dueDayPh">
-            <div class="form-buttons">
-              <button class="btn primary submit-btn" type="submit" data-i18n="addLiab"></button>
-              <button class="btn cancel-btn" type="button" hidden data-i18n="cancel"></button>
-            </div>
-          </form>
-          <ul id="liab-list" class="list"></ul>
-        </section>
-
-        <!-- BUDGETS -->
-        <section class="panel" aria-labelledby="budget-title">
-          <h2 id="budget-title" data-i18n="budgets"></h2>
-          <form id="budget-form" class="entry-form">
-            <select name="category" data-i18n-ph="category"></select>
-            <input name="limit" type="number" min="0.01" step="0.01" required data-i18n-ph="budgetLimit">
-            <div class="form-buttons">
-              <button class="btn primary" type="submit" data-i18n="setBudget"></button>
-            </div>
-          </form>
-          <ul id="budget-list" class="list"></ul>
-        </section>
-      </div>
-    </main>
-  </div>
-
-  <script src="app.js"></script>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ledger</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body>
+<div id="login" class="hidden"><form id="lf" class="card login"><h1 data-t="title"></h1>
+<input id="u" data-p="user" autocomplete="username" required><input id="p" type="password" data-p="pass" autocomplete="current-password" required>
+<p id="lerr" class="neg"></p><button class="btn" data-t="signin"></button><button type="button" class="link lang" data-t="lang"></button></form></div>
+<div id="app" class="hidden">
+<header><h1 data-t="title"></h1><span id="status"></span><button class="link lang" data-t="lang"></button><button class="link" id="out" data-t="signout"></button></header>
+<div class="toolbar"><label data-t="period"></label><select id="per"></select><span id="cust" class="hidden row"><input type="date" id="pf"><input type="date" id="pt"></span></div>
+<div id="integ"></div>
+<section class="hero"><div><small data-t="assets"></small><b id="hA" class="pos"></b></div><div><small data-t="liab"></small><b id="hL" class="pur"></b></div>
+<div><small data-t="equity"></small><b id="hE"></b></div><div><small data-t="net"></small><b id="hN"></b></div></section>
+<div id="empty" class="card empty hidden"><p data-t="noData"></p><button class="btn" id="first" data-t="first"></button></div>
+<section id="charts" class="grid hidden">
+<div class="card"><h2 data-t="c1"></h2><div id="c1" class="ch">Loading…</div></div>
+<div class="card"><h2 data-t="c4"></h2><div id="c4" class="ch">Loading…</div></div>
+<div class="card"><h2 data-t="c2"></h2><div id="c2" class="ch">Loading…</div></div>
+<div class="card"><h2 data-t="c3"></h2><div id="c3" class="ch">Loading…</div></div>
+<div class="card"><h2 data-t="c5"></h2><div id="c5" class="ch">Loading…</div></div>
+<div class="card"><h2 data-t="c7"></h2><div id="c7" class="ch">Loading…</div></div>
+<div class="card wide"><div class="row"><h2 data-t="c6"></h2><select id="topn"></select></div><div id="c6" class="ch">Loading…</div></div>
+</section>
+<main class="grid">
+<div class="card"><h2 data-t="coa"></h2><form id="af" class="row"><input id="an" data-p="name" required><select id="at"></select><input id="ao" type="number" step="0.01" value="0" title="Opening"><label class="chk"><input type="checkbox" id="ac"> <span data-t="cash"></span></label><button class="btn" id="asv" data-t="add"></button></form><p id="aerr" class="neg"></p><div id="accts" class="tw"></div></div>
+<div class="card"><h2 data-t="entry"></h2><form id="tf" class="col"><input type="date" id="td" required><input id="tm" data-p="memo"><input id="ta" type="number" step="0.01" min="0.01" data-p="amount" required>
+<select id="tdb" required></select><select id="tcr" required></select><p id="terr" class="neg"></p><div class="row"><button class="btn" id="tsv"></button><button type="button" class="link hidden" id="tcx" data-t="cancel"></button></div></form></div>
+<div class="card wide"><h2 data-t="ledger"></h2><select id="lsel"></select><div class="tw" id="lout"></div></div>
+<div class="card wide"><h2 data-t="all"></h2><div class="row"><select id="fsel"></select><input type="date" id="ff"><input type="date" id="ft"></div><div class="tw" id="aout"></div></div>
+<div class="card"><h2 data-t="is"></h2><div class="tw" id="isout"></div></div><div class="card"><h2 data-t="bs"></h2><div class="tw" id="bsout"></div></div>
+<div class="card wide"><h2 data-t="tb"></h2><div class="tw" id="tbout"></div></div>
+</main></div><script src="accounting.js"></script><script src="app.js"></script><script src="charts.js"></script></body></html>

@@ -1,46 +1,37 @@
 {
-  "income": [
-    {
-      "id": "mumdt0ipg4zgh",
-      "description": "total money 9-29-26",
-      "amount": 20000,
-      "date": "2026-09-29"
-    }
-  ],
-  "expenses": [
-    {
-      "id": "mumeiftmlwj5g",
-      "description": "withdaw",
-      "category": "Other",
-      "amount": 500,
-      "date": "2026-09-29"
-    },
-    {
-      "id": "mumipgmcyqb1o",
-      "description": "cashout pang ulam",
-      "category": "Food",
-      "amount": 500,
-      "date": "2026-09-29"
-    },
-    {
-      "id": "munb3t3uvrshk",
-      "description": "wideaw",
-      "category": "Other",
-      "amount": 200,
-      "date": "2026-09-30"
-    }
-  ],
-  "savings": [],
-  "liabilities": [
-    {
-      "id": "mumdl4lamx1ce",
-      "name": "motor utang",
-      "original": 75000,
-      "balance": 75000,
-      "monthly": 3000,
-      "dueDay": 15
-    }
-  ],
-  "payments": [],
-  "budgets": {}
+ "accounts": [
+  {
+   "id": "a1",
+   "name": "Cash",
+   "type": "Asset",
+   "isCash": true
+  },
+  {
+   "id": "a2",
+   "name": "Salary",
+   "type": "Income"
+  },
+  {
+   "id": "a3",
+   "name": "Groceries",
+   "type": "Expense"
+  },
+  {
+   "id": "a4",
+   "name": "Credit Card",
+   "type": "Liability"
+  },
+  {
+   "id": "a5",
+   "name": "Owner's Equity",
+   "type": "Equity"
+  },
+  {
+   "id": "sys-obe",
+   "name": "Opening Balance Equity",
+   "type": "Equity",
+   "system": true
+  }
+ ],
+ "transactions": []
 }
