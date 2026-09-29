@@ -5,7 +5,7 @@
   // username/password (kept in Vercel env vars) and sets an httpOnly cookie;
   // /api/data reads and writes db.json in GitHub. Nothing secret is in this file.
   const LANG_KEY = "budgetbook.lang";
-  const CATEGORIES = ["Food", "Transport", "Bills", "Rent", "Health", "Education", "Shopping", "Other"];
+  const CATEGORIES = ["Food", "Transport", "Bills", "Rent", "Health", "Education", "ShoppingBudol", "internet", "luho", "Meralco", "Water", "Other"];
 
   /* ---------- language ---------- */
   const I18N = {
