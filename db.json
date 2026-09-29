@@ -1,0 +1,18 @@
+{
+  "income": [
+    { "id": "inc-1", "description": "Salary", "amount": 30000, "date": "2026-09-15" },
+    { "id": "inc-2", "description": "Freelance project", "amount": 5000, "date": "2026-09-20" }
+  ],
+  "expenses": [
+    { "id": "exp-1", "description": "Groceries", "category": "Food", "amount": 4500, "date": "2026-09-03" },
+    { "id": "exp-2", "description": "Electric bill", "category": "Bills", "amount": 2200, "date": "2026-09-10" }
+  ],
+  "savings": [
+    { "id": "sav-1", "type": "deposit", "description": "Emergency fund", "amount": 3000, "date": "2026-09-16" }
+  ],
+  "liabilities": [
+    { "id": "liab-1", "name": "Personal loan", "original": 75000, "balance": 75000, "monthly": 5000, "dueDay": 15 }
+  ],
+  "payments": [],
+  "budgets": { "Food": 6000 }
+}
