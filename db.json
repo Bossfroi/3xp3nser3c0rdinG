@@ -13,7 +13,5 @@
     }
   ],
   "payments": [],
-  "budgets": {
-    "Food": 6000
-  }
+  "budgets": {}
 }
