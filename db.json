@@ -30,7 +30,7 @@
       "id": "mumen96346hv9",
       "name": "sss utang bahay",
       "original": 1500000,
-      "balance": 1500000,
+      "balance": 1492000,
       "monthly": 8000,
       "dueDay": 29
     }
@@ -69,6 +69,13 @@
       "liabilityId": "mumdl4lamx1ce",
       "month": "2026-09",
       "amount": 3000,
+      "date": "2026-09-29"
+    },
+    {
+      "id": "mumenfc4gq1rd",
+      "liabilityId": "mumen96346hv9",
+      "month": "2026-09",
+      "amount": 8000,
       "date": "2026-09-29"
     }
   ],
