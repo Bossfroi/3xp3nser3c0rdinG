@@ -20,5 +20,7 @@
     }
   ],
   "payments": [],
-  "budgets": {}
+  "budgets": {
+    "Other": 5000
+  }
 }
