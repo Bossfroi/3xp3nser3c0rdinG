@@ -7,13 +7,6 @@
       "category": "Food",
       "amount": 4500,
       "date": "2026-09-03"
-    },
-    {
-      "id": "exp-2",
-      "description": "Electric bill",
-      "category": "Bills",
-      "amount": 2200,
-      "date": "2026-09-10"
     }
   ],
   "savings": [
