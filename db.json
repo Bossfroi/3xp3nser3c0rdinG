@@ -7,7 +7,15 @@
       "date": "2026-09-29"
     }
   ],
-  "expenses": [],
+  "expenses": [
+    {
+      "id": "mumeiftmlwj5g",
+      "description": "withdaw",
+      "category": "Other",
+      "amount": 500,
+      "date": "2026-09-29"
+    }
+  ],
   "savings": [],
   "liabilities": [
     {
