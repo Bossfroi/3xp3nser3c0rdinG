@@ -14,6 +14,13 @@
       "category": "Other",
       "amount": 500,
       "date": "2026-09-29"
+    },
+    {
+      "id": "mumipgmcyqb1o",
+      "description": "cashout pang ulam",
+      "category": "Food",
+      "amount": 500,
+      "date": "2026-09-29"
     }
   ],
   "savings": [],
@@ -22,27 +29,12 @@
       "id": "mumdl4lamx1ce",
       "name": "motor utang",
       "original": 75000,
-      "balance": 69000,
+      "balance": 75000,
       "monthly": 3000,
       "dueDay": 15
     }
   ],
-  "payments": [
-    {
-      "id": "mumelqqndxb2f",
-      "liabilityId": "mumdl4lamx1ce",
-      "month": "2026-09",
-      "amount": 3000,
-      "date": "2026-09-29"
-    },
-    {
-      "id": "mumem101v5uux",
-      "liabilityId": "mumdl4lamx1ce",
-      "month": "2026-09",
-      "amount": 3000,
-      "date": "2026-09-29"
-    }
-  ],
+  "payments": [],
   "budgets": {
     "Other": 9000
   }
