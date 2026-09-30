@@ -17,9 +17,9 @@
     },
     {
       "id": "exp-2",
-      "description": "1",
+      "description": "Electric bill",
       "category": "Bills",
-      "amount": 2200,
+      "amount": 1,
       "date": "2026-09-10"
     }
   ],
