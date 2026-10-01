@@ -224,3 +224,68 @@ label { display: grid; gap: 6px; font-weight: 500; font-size: .9rem; }
 .save-status.saving { color: var(--muted); }
 .save-status.saved { color: var(--income); }
 .save-status.error { color: var(--neg); background: #fbe4e2; }
+
+/* accessibility: skip link */
+.skip-link {
+  position: absolute; left: 8px; top: -48px;
+  background: var(--ink); color: #fff; padding: 10px 16px;
+  border-radius: 8px; text-decoration: none; font-weight: 600;
+  transition: top .15s ease; z-index: 100;
+}
+.skip-link:focus { top: 8px; }
+
+/* loading state */
+.loading-view {
+  min-height: 100vh; display: grid; place-items: center; gap: 12px;
+  justify-items: center; color: var(--muted); padding: 24px; text-align: center;
+}
+.spinner {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 3px solid var(--line); border-top-color: var(--ink);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; border-top-color: var(--line); } }
+
+/* quick nav */
+.quick-nav {
+  display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  padding: 10px 24px; background: var(--surface); border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10;
+}
+.quick-nav a {
+  flex: 0 0 auto; padding: 6px 14px; border-radius: 999px; font-size: .85rem; font-weight: 600;
+  color: var(--muted); text-decoration: none; white-space: nowrap;
+}
+.quick-nav a:hover { color: var(--ink); background: var(--bg); }
+@media (max-width: 600px) { .quick-nav { padding: 10px 14px; } }
+
+/* scroll offset so the sticky quick-nav doesn't cover the jump target */
+#section-income, #section-expense, #section-savings, #section-liab, #section-budget {
+  scroll-margin-top: 56px;
+}
+
+/* getting started checklist */
+.checklist { border-color: var(--ink); }
+.checklist-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.checklist-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.checklist-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-top: 1px solid var(--line);
+}
+.checklist-item:first-child { border-top: 0; padding-top: 0; }
+.check-mark {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--line); display: grid; place-items: center;
+  font-size: .8rem; font-weight: 700; color: #fff;
+}
+.checklist-item.done .check-mark { background: var(--income); border-color: var(--income); }
+.check-text { flex: 1; }
+.checklist-item.done .check-text { color: var(--muted); text-decoration: line-through; }
+
+/* responsive: keep the liability payment row from overflowing on narrow screens */
+@media (max-width: 420px) {
+  .pay-form { flex-wrap: wrap; }
+  .pay-form input { flex: 1 1 100%; }
+  .pay-form .btn { flex: 1 1 100%; }
+}

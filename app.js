@@ -5,6 +5,7 @@
   // username/password (kept in Vercel env vars) and sets an httpOnly cookie;
   // /api/data reads and writes db.json in GitHub. Nothing secret is in this file.
   const LANG_KEY = "budgetbook.lang";
+  const CHECKLIST_KEY = "budgetbook.checklist.dismissed";
   const CATEGORIES = ["Food", "Transport", "Bills", "Rent", "Health", "Education", "Shopping", "Other"];
 
   /* ---------- language ---------- */
@@ -52,11 +53,18 @@
       noPayOne: "{n} liability has no payment yet this month.",
       noPayMany: "{n} liabilities have no payment yet this month.",
       confirmDelLiab: 'Delete "{n}" and its payment history?',
+      confirmDelEntry: 'Delete "{n}"? This can\'t be undone.',
       confirmReplace: "Replace all current data with this file?",
       badFile: "That file is not valid JSON. Pick the data.json you exported.",
       cantWithdraw: "You can't withdraw more than your total savings ({a}).",
       catFood: "Food", catTransport: "Transport", catBills: "Bills", catRent: "Rent",
       catHealth: "Health", catEducation: "Education", catShopping: "Shopping", catOther: "Other",
+      skipToContent: "Skip to main content", loadingApp: "Loading…",
+      checklistTitle: "Getting started", dismiss: "Dismiss",
+      checkIncome: "Add your first income entry", checkExpense: "Add your first expense",
+      checkBudget: "Set a monthly budget for a category", checkSavings: "Record a savings deposit",
+      checkLiability: "Add a loan or debt, if you have one (optional)",
+      go: "Go",
     },
     tl: {
       langBtn: "English",
@@ -101,11 +109,18 @@
       noPayOne: "{n} utang ang wala pang bayad ngayong buwan.",
       noPayMany: "{n} utang ang wala pang bayad ngayong buwan.",
       confirmDelLiab: 'Burahin ang "{n}" at ang history ng bayad nito?',
+      confirmDelEntry: 'Burahin ang "{n}"? Hindi na ito maibabalik.',
       confirmReplace: "Palitan ang lahat ng kasalukuyang data ng file na ito?",
       badFile: "Hindi valid na JSON ang file na iyon. Piliin ang data.json na na-export mo.",
       cantWithdraw: "Hindi ka pwedeng mag-withdraw ng higit sa kabuuang ipon mo ({a}).",
       catFood: "Pagkain", catTransport: "Pamasahe", catBills: "Bills", catRent: "Upa",
       catHealth: "Kalusugan", catEducation: "Edukasyon", catShopping: "Shopping", catOther: "Iba pa",
+      skipToContent: "Lumaktaw papunta sa nilalaman", loadingApp: "Nilo-load…",
+      checklistTitle: "Mga unang hakbang", dismiss: "Itago",
+      checkIncome: "Magdagdag ng unang kita", checkExpense: "Magdagdag ng unang gastos",
+      checkBudget: "Mag-set ng monthly budget sa isang category", checkSavings: "Mag-record ng deposito sa ipon",
+      checkLiability: "Magdagdag ng utang, kung meron (opsyonal)",
+      go: "Puntahan",
     },
   };
 
@@ -129,8 +144,9 @@
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   };
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-  const sum = (arr, key = "amount") => arr.reduce((a, x) => a + x[key], 0);
-  const savingsBalance = (arr) => arr.reduce((a, s) => a + (s.type === "withdraw" ? -s.amount : s.amount), 0);
+  // Pure financial math lives in calc.js (shared with the test suite in
+  // tests/calculations.test.js) — reused here rather than duplicated.
+  const { sum, savingsBalance, ensureOriginal: calcEnsureOriginal, budgetProgress, dueStatus: calcDueStatus } = window.BudgetCalc;
 
   let state = { income: [], expenses: [], savings: [], liabilities: [], payments: [], budgets: {} };
   let month = todayStr().slice(0, 7);
@@ -241,11 +257,7 @@
   }
 
   function totals(m) {
-    const income = sum(state.income.filter((i) => i.date.startsWith(m)));
-    const expenses = sum(state.expenses.filter((e) => e.date.startsWith(m)));
-    const debt = sum(state.payments.filter((p) => p.month === m));
-    const saved = savingsBalance(state.savings.filter((s) => s.date.startsWith(m)));
-    return { income, expenses, debt, saved, net: income - expenses - debt - saved };
+    return window.BudgetCalc.totals(state, m);
   }
 
   function defaultDate() {
@@ -325,9 +337,12 @@
     $("#fig-savings").textContent = peso.format(savingsBalance(state.savings));
     $("#fig-owed").textContent = peso.format(sum(state.liabilities, "balance"));
 
-    const dueCount = state.liabilities.filter(
-      (l) => l.monthly > 0 && l.balance > 0 && !state.payments.some((p) => p.liabilityId === l.id && p.month === month)
-    ).length;
+    // Same rule as each liability card's badge: any unpaid liability with a
+    // due day counts, whether or not it has a "usual monthly payment" set.
+    const dueCount = state.liabilities.filter((l) => {
+      const paidThisMonth = state.payments.some((p) => p.liabilityId === l.id && p.month === month);
+      return dueStatus(l, paidThisMonth) !== null;
+    }).length;
     let note;
     if (!tt.income && !tt.expenses && !tt.debt && !tt.saved) note = t("noRecords");
     else if (tt.net < 0) note = t("overspent");
@@ -392,6 +407,7 @@
       el("span", { class: "actions" },
         editBtn(i.description, () => { showMonthOf(i.date); startEdit("income", i.id, { description: i.description, amount: i.amount, date: i.date }); }),
         delBtn(i.description, () => {
+          if (!confirm(t("confirmDelEntry", { n: i.description }))) return;
           state.income = state.income.filter((x) => x.id !== i.id);
           if (editing.income === i.id) endEdit("income");
           commit();
@@ -409,6 +425,7 @@
       el("span", { class: "actions" },
         editBtn(e.description, () => startEdit("expense", e.id, { description: e.description, category: e.category, amount: e.amount, date: e.date })),
         delBtn(e.description, () => {
+          if (!confirm(t("confirmDelEntry", { n: e.description }))) return;
           state.expenses = state.expenses.filter((x) => x.id !== e.id);
           if (editing.expense === e.id) endEdit("expense");
           commit();
@@ -430,6 +447,7 @@
         el("span", { class: "actions" },
           editBtn(name, () => startEdit("savings", s.id, { type: s.type, description: s.description || "", amount: s.amount, date: s.date })),
           delBtn(name, () => {
+            if (!confirm(t("confirmDelEntry", { n: name }))) return;
             state.savings = state.savings.filter((x) => x.id !== s.id);
             if (editing.savings === s.id) endEdit("savings");
             commit();
@@ -441,7 +459,7 @@
 
   // older saved data may not have "original"; work it out from balance + payments
   function ensureOriginal(l) {
-    if (!l.original) l.original = +(l.balance + sum(paymentsOf(l))).toFixed(2);
+    if (!l.original) l.original = calcEnsureOriginal(l, paymentsOf(l));
     return l.original;
   }
 
@@ -462,11 +480,9 @@
   }
 
   function dueStatus(l, paidThisMonth) {
-    if (!l.dueDay || l.balance <= 0 || paidThisMonth || month !== todayStr().slice(0, 7)) return null;
-    const day = new Date().getDate();
-    if (day > l.dueDay) return "overdue";
-    if (l.dueDay - day <= 5) return "soon";
-    return null;
+    // Due reminders only make sense while looking at the real current month.
+    if (month !== todayStr().slice(0, 7)) return null;
+    return calcDueStatus(l, paidThisMonth, new Date());
   }
 
   function renderLiabilities() {
@@ -533,15 +549,14 @@
     fillList($("#budget-list"), cats, (c) => {
       const limit = state.budgets[c];
       const spent = sum(state.expenses.filter((e) => e.date.startsWith(month) && e.category === c));
-      const pct = Math.min(100, (spent / limit) * 100);
-      const over = spent > limit;
+      const { pct, over, overBy } = budgetProgress(spent, limit);
       return el("li", { class: "budget" },
         el("div", { class: "liab-head" },
           el("span", { class: "title" }, t("cat" + c)),
           el("span", { class: "meta" }, t("budgetOf", { s: peso.format(spent), l: peso.format(limit) }))),
         el("div", { class: "progress" + (over ? " over" : ""), role: "img", "aria-label": `${Math.round(pct)}%` },
           el("span", { style: `width:${pct}%` })),
-        over ? el("p", { class: "over-note" }, t("overBy", { a: peso.format(spent - limit) })) : null,
+        over ? el("p", { class: "over-note" }, t("overBy", { a: peso.format(overBy) })) : null,
         el("div", { class: "actions" },
           editBtn(t("cat" + c), () => {
             const f = $("#budget-form");
@@ -551,7 +566,46 @@
     }, t("emptyBudget"));
   }
 
+  function checklistDismissed() {
+    try { return localStorage.getItem(CHECKLIST_KEY) === "1"; } catch (e) { return false; }
+  }
+
+  // A short, dismissible "Getting started" list for a brand-new user. Each
+  // item checks itself off as soon as the matching kind of record exists
+  // anywhere in the data (not just the selected month), and clicking an
+  // unfinished item jumps straight to the right form.
+  function renderChecklist() {
+    const section = $("#checklist");
+    const allDone =
+      state.income.length > 0 && state.expenses.length > 0 &&
+      Object.keys(state.budgets).length > 0 && state.savings.length > 0;
+    if (checklistDismissed() || allDone) { section.hidden = true; return; }
+    section.hidden = false;
+
+    const items = [
+      { done: state.income.length > 0, key: "checkIncome", target: "#section-income", focus: "#income-form input[name=description]" },
+      { done: state.expenses.length > 0, key: "checkExpense", target: "#section-expense", focus: "#expense-form input[name=description]" },
+      { done: Object.keys(state.budgets).length > 0, key: "checkBudget", target: "#section-budget", focus: "#budget-form select[name=category]" },
+      { done: state.savings.length > 0, key: "checkSavings", target: "#section-savings", focus: "#savings-form input[name=amount]" },
+      { done: state.liabilities.length > 0, key: "checkLiability", target: "#section-liab", focus: "#liab-form input[name=name]" },
+    ];
+    $("#checklist-items").replaceChildren(...items.map((item) =>
+      el("li", { class: "checklist-item" + (item.done ? " done" : "") },
+        el("span", { class: "check-mark", "aria-hidden": "true" }, item.done ? "✓" : ""),
+        el("span", { class: "check-text" }, t(item.key)),
+        item.done ? null : el("button", {
+          class: "btn small", type: "button",
+          onclick: () => {
+            const target = $(item.target);
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            const field = $(item.focus);
+            if (field) setTimeout(() => field.focus(), 300);
+          },
+        }, t("go")))));
+  }
+
   function renderAll() {
+    renderChecklist();
     renderSummary();
     renderTrend();
     renderIncome();
@@ -703,6 +757,7 @@
 
   /* ---------- login ---------- */
   function showLogin(message) {
+    $("#loading-view").hidden = true;
     $("#app-view").hidden = true;
     $("#login-view").hidden = false;
     if (message) {
@@ -721,6 +776,7 @@
       showLogin(t("loadError", { m: e.message }));
       return;
     }
+    $("#loading-view").hidden = true;
     $("#login-view").hidden = true;
     $("#app-view").hidden = false;
     render();
@@ -783,6 +839,10 @@
     bindLogin();
     bindForms();
     bindBackup();
+    $("#checklist-dismiss").addEventListener("click", () => {
+      try { localStorage.setItem(CHECKLIST_KEY, "1"); } catch (e) { /* ignore */ }
+      $("#checklist").hidden = true;
+    });
     $("#month-input").addEventListener("change", (e) => {
       if (!e.target.value) return;
       month = e.target.value;

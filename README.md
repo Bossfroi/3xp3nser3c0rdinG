@@ -48,6 +48,7 @@ called from `api/data.js`.
 
 ```
 index.html, style.css, app.js   → the app (static files, served as-is)
+calc.js                         → pure financial calculations (shared with the test suite)
 api/auth/login.js               → POST { username, password } → sets session cookie
 api/auth/logout.js              → POST → clears session cookie
 api/data.js                     → GET  → current db.json contents
@@ -55,6 +56,7 @@ api/data.js                     → GET  → current db.json contents
 lib/github.js                   → GitHub Contents API calls (server-only)
 lib/session.js                  → signed-cookie session helpers (server-only)
 db.json                         → starting data — commit this to your repo
+tests/calculations.test.js      → automated tests for calc.js (run with `node tests/calculations.test.js`)
 .env.example                    → names of the env vars you must set in Vercel
 ```
 
@@ -106,6 +108,77 @@ saved / Not saved"** indicator in the top bar shows the result of each save.
 3. Redeploy so the new env vars take effect.
 4. Visit the deployed URL, sign in, and start adding entries. Check your
    GitHub repo's commit history — each save shows up as a commit to `db.json`.
+
+## Changelog — audit of the improvement pass
+
+This section records what was inspected, fixed, and added on top of the
+existing app, so it's clear what changed and what didn't.
+
+**Preserved as-is** (already worked correctly): the whole data model
+(income/expenses/savings/liabilities/payments/budgets), the GitHub-backed
+storage flow, login/session handling, export/import, the EN/Tagalog
+language system, partial liability payments, and the monthly cash-flow
+math. None of these were rebuilt or restructured.
+
+**A. Bug fixes**
+- The "N liabilities have no payment yet" note in the monthly summary used
+  to only count liabilities that had a "usual monthly payment" set, so a
+  liability with just a due day (no fixed monthly amount) could be
+  overdue on its own card but silently missing from the summary. Both now
+  use the same `dueStatus()` check.
+
+**B. Missing functionality**
+- Income, expense, and savings entries can now be deleted *without* a
+  confirmation prompt had that gap — only liabilities asked "are you
+  sure?" before. All four now confirm before deleting, since deletions
+  can't be undone.
+- Added a dismissible "Getting started" checklist that appears for a new
+  user (or anyone who hasn't yet added at least one income, expense,
+  budget, and savings entry) with one-click jumps to each form.
+
+**C/D. Navigation & onboarding**
+- Added a sticky quick-nav bar (Income / Expenses / Savings / Liabilities
+  / Budgets) so a long page can be jumped to directly instead of only
+  scrolled — most useful on mobile.
+- The checklist above doubles as lightweight onboarding for first-time use.
+
+**E. Financial calculations**
+- Extracted the pure calculation logic (`totals`, `savingsBalance`,
+  `ensureOriginal`, `budgetProgress`, `dueStatus`) into `calc.js`, shared
+  between the browser app and an actual automated test suite —
+  previously there were zero tests. `app.js` now calls into `calc.js`
+  rather than keeping its own copy, so there's one source of truth.
+- Verified correct: month filtering, liability balance reconstruction for
+  older records, budget over/under math, and due-date logic. See **Testing**
+  below for the real run output.
+
+**F. UX improvements**
+- Added a loading screen for the moment between page load and the first
+  `/api/data` response, instead of a blank gap.
+
+**G. Accessibility**
+- Added a "Skip to main content" link for keyboard/screen-reader users.
+- Quick-nav and checklist use real text (not color-only) to convey state.
+
+**H. Responsive improvements**
+- Fixed the liability "add payment" row so it wraps onto its own line on
+  very narrow screens (≤420px) instead of being squeezed.
+
+**I. Testing**
+- Added `tests/calculations.test.js` (plain Node, no framework
+  dependency). Run it yourself with:
+  ```
+  node tests/calculations.test.js
+  ```
+  Last run: **17/17 passed** — covering month-filtered totals, savings
+  deposit/withdraw math, liability-balance reconstruction from older
+  records, budget over/under edge cases (including a zero limit), and
+  due-soon/overdue/paid logic.
+
+**Not changed:** the data format in `db.json`, the API routes' request/
+response shapes, the GitHub commit-per-save behavior, and the visual
+theme (colors, fonts, card layout) — all exactly as before, so existing
+data and any bookmarked/deployed setup keeps working without migration.
 
 ## Error handling notes
 

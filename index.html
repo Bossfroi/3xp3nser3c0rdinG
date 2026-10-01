@@ -10,9 +10,16 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content" data-i18n="skipToContent"></a>
+
+  <!-- LOADING (shown only while checking session / fetching data) -->
+  <div id="loading-view" class="loading-view" role="status" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <p data-i18n="loadingApp"></p>
+  </div>
 
   <!-- LOGIN -->
-  <main id="login-view" class="login">
+  <main id="login-view" class="login" hidden>
     <form id="login-form" class="login-card" autocomplete="off">
       <div class="login-top">
         <h1>Budget Book</h1>
@@ -47,7 +54,24 @@
       </div>
     </header>
 
-    <main class="wrap">
+    <nav class="quick-nav" aria-label="Section">
+      <a href="#section-income" data-i18n="income"></a>
+      <a href="#section-expense" data-i18n="expenses"></a>
+      <a href="#section-savings" data-i18n="savings"></a>
+      <a href="#section-liab" data-i18n="liabilities"></a>
+      <a href="#section-budget" data-i18n="budgets"></a>
+    </nav>
+
+    <main class="wrap" id="main-content">
+      <!-- ONBOARDING CHECKLIST (hidden once dismissed or once data exists) -->
+      <section id="checklist" class="panel checklist" hidden>
+        <div class="checklist-head">
+          <h2 data-i18n="checklistTitle"></h2>
+          <button type="button" id="checklist-dismiss" class="btn small ghost" data-i18n="dismiss"></button>
+        </div>
+        <ul id="checklist-items" class="checklist-items"></ul>
+      </section>
+
       <!-- CASH FLOW -->
       <section class="hero" aria-labelledby="hero-title">
         <p id="hero-title" class="hero-label"></p>
@@ -75,7 +99,7 @@
 
       <div class="panels">
         <!-- INCOME -->
-        <section class="panel" aria-labelledby="income-title">
+        <section class="panel" id="section-income" aria-labelledby="income-title">
           <h2 id="income-title" data-i18n="income"></h2>
           <form id="income-form" class="entry-form">
             <input name="description" required maxlength="60" data-i18n-ph="incSource">
@@ -90,7 +114,7 @@
         </section>
 
         <!-- EXPENSES -->
-        <section class="panel" aria-labelledby="expense-title">
+        <section class="panel" id="section-expense" aria-labelledby="expense-title">
           <h2 id="expense-title" data-i18n="expenses"></h2>
           <form id="expense-form" class="entry-form">
             <input name="description" required maxlength="60" data-i18n-ph="expDesc">
@@ -106,7 +130,7 @@
         </section>
 
         <!-- SAVINGS -->
-        <section class="panel" aria-labelledby="savings-title">
+        <section class="panel" id="section-savings" aria-labelledby="savings-title">
           <h2 id="savings-title" data-i18n="savings"></h2>
           <p class="panel-figure"><span data-i18n="totalSavings"></span>: <strong id="savings-total">₱0.00</strong></p>
           <form id="savings-form" class="entry-form">
@@ -127,7 +151,7 @@
         </section>
 
         <!-- LIABILITIES -->
-        <section class="panel" aria-labelledby="liab-title">
+        <section class="panel" id="section-liab" aria-labelledby="liab-title">
           <h2 id="liab-title" data-i18n="liabilities"></h2>
           <form id="liab-form" class="entry-form">
             <input name="name" required maxlength="60" data-i18n-ph="liabName">
@@ -143,7 +167,7 @@
         </section>
 
         <!-- BUDGETS -->
-        <section class="panel" aria-labelledby="budget-title">
+        <section class="panel" id="section-budget" aria-labelledby="budget-title">
           <h2 id="budget-title" data-i18n="budgets"></h2>
           <form id="budget-form" class="entry-form">
             <select name="category" data-i18n-ph="category"></select>
@@ -158,6 +182,7 @@
     </main>
   </div>
 
+  <script src="calc.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
