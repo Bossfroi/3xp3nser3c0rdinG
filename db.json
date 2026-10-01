@@ -37,12 +37,20 @@
       "id": "liab-1",
       "name": "Personal loan",
       "original": 75000,
-      "balance": 75000,
+      "balance": 70000,
       "monthly": 5000,
       "dueDay": 15
     }
   ],
-  "payments": [],
+  "payments": [
+    {
+      "id": "mup4079f2yplm",
+      "liabilityId": "liab-1",
+      "month": "2026-02",
+      "amount": 5000,
+      "date": "2026-02-01"
+    }
+  ],
   "budgets": {
     "Food": 6000
   }
