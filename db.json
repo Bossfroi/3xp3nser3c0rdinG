@@ -5,6 +5,12 @@
       "description": "Salary",
       "amount": 19000,
       "date": "2026-09-30"
+    },
+    {
+      "id": "mv0etby3ghdu8",
+      "description": "truck income",
+      "amount": 100000,
+      "date": "2026-10-09"
     }
   ],
   "expenses": [
